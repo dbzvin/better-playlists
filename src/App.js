@@ -19,8 +19,8 @@ let fakeServerData = {
 				name: 'Discover Weekly',
 				songs: [
 					{name: 'Le song', duration: 1712},
-					{name: 'The song', duration: 12051},
-					{name: 'Sangan', duration: 16170}
+					{name: 'Helle', duration: 12051},
+					{name: 'Bohemian Rhapsody', duration: 16170}
 				]
 			},
 			{
@@ -80,14 +80,15 @@ class Filter extends Component {
 
 class Playlist extends Component {
 	render() {
+		let playlist = this.props.playlist
 		return (
 			<div style={{ ...defaultStyle, display: 'inline-block', width: '25%' }}>
 				{/* <img /> */}
-				<h3>Playlist Name</h3>
+				<h3>{playlist.name}</h3>
 				<ul>
-					<li>Song 1</li>
-					<li>Song 2</li>
-					<li>Song 3</li>
+					{playlist.songs.map(song =>
+						<li>{song.name}</li>
+					)}
 				</ul>
 			</div>
 		);
@@ -108,8 +109,7 @@ class App extends Component {
 		let headerStyle = { ...defaultStyle, 'font-size': '54px' }
 		return (
 			<div className="App">
-				{
-					this.state.serverData.user ?
+				{this.state.serverData.user ?
 					<div>
 						<h1 style={headerStyle}>
 							{this.state.serverData.user.name}'s Playlists
@@ -117,10 +117,9 @@ class App extends Component {
 						<PlaylistCounter playlists={this.state.serverData.user.playlists} />
 						<HoursCounter playlists={this.state.serverData.user.playlists} />
 				<Filter />
-				<Playlist />
-				<Playlist />
-				<Playlist />
-				<Playlist />
+						{this.state.serverData.user.playlists.map(
+							playlist => <Playlist playlist={playlist} />
+						)}
 					</div> : 
 					<h1 style={{defaultStyle}}>Loading ...</h1>
 				}
