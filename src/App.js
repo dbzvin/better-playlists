@@ -41,7 +41,7 @@ class Playlist extends Component {
 		);
 	}
 }
-
+// this is the comment that i decided to add 
 class App extends Component {
 	render() {
 		let name = 'Vince'
