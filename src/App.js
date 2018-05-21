@@ -127,7 +127,6 @@ class App extends Component {
 			.then(response => response.json())
 			.then(data => this.setState({
 				playlists: data.items.map(item => {
-					console.log(item)
 					return {
 						name: item.name,
 						imageUrl: item.images[0].url,
@@ -162,9 +161,9 @@ class App extends Component {
 					</div> : 
 					<button 
 						onClick={() => 
-							window.location = window.location.includes('localhost') 
+							window.location = window.location.href.includes('localhost') 
 								? 'http://localhost:8888/login' 
-								: 'https://vb-better-playlists.herokuapp.com/login'
+								: 'https://vb-mybackend.herokuapp.com/login'
 						}
 						style={{padding: '20px', 'font-size': '50px', 'margin-top': '20px'}}>
 						Sign in to Spotify
