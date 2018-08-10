@@ -67,7 +67,6 @@ class HoursCounter extends Component {
 		);
 	}
 }
-
 class Filter extends Component {
 	render() {
 		return (
@@ -79,13 +78,12 @@ class Filter extends Component {
 		);
 	}
 }
-
 class Playlist extends Component {
 	render() {
 		let playlist = this.props.playlist
 		return (
 			<div style={{ ...defaultStyle, display: 'inline-block', width: '25%' }}>
-				<img src={playlist.imageUrl} style={{width: '60px'}} />
+				<img src={playlist.imageUrl} style={{width: '160px'}} />
 				<h3>{playlist.name}</h3>
 				<ul>
 					{playlist.songs.map(song =>
@@ -112,21 +110,36 @@ class App extends Component {
 			return;
 		fetch('https://api.spotify.com/v1/me', {
 			headers: {'Authorization': 'Bearer ' + accessToken}
-			})
+		})
 			.then(response => response.json())
-			.then(data => 
-				this.setState({
-					user: {
-						name: data.display_name
-					}
-				})
-			)
+			.then(data => {
+				this.setState({user: {name: data.display_name}})
+			})
 		fetch('https://api.spotify.com/v1/me/playlists', {
 			headers: {'Authorization': 'Bearer ' + accessToken}
 		})
 			.then(response => response.json())
-			.then(data => this.setState({
-				playlists: data.items.map(item => {
+			.then(playlistData => {
+				let playlists = playlistData.items
+				let trackDataPromises = playlists.map(playlist => {
+					let responsePromise = fetch(playlist.tracks.href, {
+						headers: {'Authorization': 'Bearer ' + accessToken}
+					}).then(response => response.json())
+					let trackDataPromise = responsePromise
+						// .then(response => response.json())
+					return trackDataPromise
+				})
+				let allTrackDataPromises = Promise.all(trackDataPromises)
+				let playlistsPromise = allTrackDataPromises.then(trackDatas => {
+					trackDatas.forEach((trackData, i) => {
+						playlists[i].trackDatas = trackData
+					})
+					return playlists
+				})
+				return playlistsPromise
+			})
+			.then(playlists => this.setState({
+				playlists: playlists.map(item => {
 					return {
 						name: item.name,
 						imageUrl: item.images[0].url,
